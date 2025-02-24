@@ -1,12 +1,15 @@
 import { ChangeEvent, useState, MouseEvent } from "react";
 import ProductCard from "./Components/ProductCard";
 import MyModal from "./Components/ui/Modal";
-import { formInputsList, productList } from "./data";
+import { Colors, formInputsList, productList } from "./data";
 import Button from "./Components/ui/Button";
 import Input from "./Components/ui/Input";
 import { IProduct } from "./interfaces";
 import { productValidation } from "./Validation";
 import ErrorMessage from "./Components/ErrorMessage";
+import CircleColor from "./Components/CircleColor";
+import { v4 as uuid } from "uuid";
+import Select from "./Components/ui/Select";
 
 const App = () => {
   // ===========  state ===========
@@ -28,7 +31,9 @@ const App = () => {
       imageURL: "",
     },
   };
+  const [products, SetProducts] = useState<IProduct[]>(productList);
   const [product, SetProduct] = useState<IProduct>(defaultProductObject);
+  const [tempColor, setTempColor] = useState<string[]>([]);
   // =========== modal handler ==========
   const open = () => {
     setIsOpen(true);
@@ -47,8 +52,8 @@ const App = () => {
 
     setErrors({
       ...errors,
-      [name]:''
-    })
+      [name]: "",
+    });
   };
 
   const oncancel = () => {
@@ -73,11 +78,17 @@ const App = () => {
       return;
     }
 
-    console.log("done");
+    SetProducts((prev) => [
+      { ...product, colors: tempColor, id: uuid() },
+      ...prev,
+    ]);
+    close();
+    SetProduct(defaultProductObject);
+    setTempColor([]);
   };
 
   // ============ render ==============
-  const renderProductsList = productList.map((product) => (
+  const renderProductsList = products.map((product) => (
     <ProductCard product={product} key={product.id} />
   ));
   const renderFormInputsList = formInputsList.map((input) => (
@@ -95,6 +106,20 @@ const App = () => {
     </div>
   ));
 
+  const renderProductColors = Colors.map((color) => (
+    <CircleColor
+      color={color}
+      key={color}
+      onClick={() => {
+        if (tempColor.includes(color)) {
+          setTempColor((prev) => prev.filter((item) => item !== color));
+          return;
+        }
+        setTempColor((prev) => [...prev, color]);
+      }}
+    />
+  ));
+
   return (
     <main className="container ">
       {/* =============== button to add product =================*/}
@@ -102,7 +127,7 @@ const App = () => {
         onClick={open}
         className="rounded-xl bg-amber-800 py-2 px-4 text-sm font-medium text-white focus:outline-none data-[hover]:bg-amber-800/70 data-[focus]:outline-1 data-[focus]:outline-white"
       >
-        Add Product
+        build Product
       </Button>
       {/* =================== products ========================= */}
       <div className=" my-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4  rounded-3xl gap-8">
@@ -112,16 +137,29 @@ const App = () => {
       <MyModal close={close} isOpen={isOpen} title="add a new product">
         <form className="space-y-3">
           {renderFormInputsList}
+          <Select/>
+          <div className="flex flex-wrap ">{renderProductColors}</div>
+          <div className="flex flex-wrap ">
+            {tempColor.map((color) => (
+              <span
+                key={color}
+                className="rounded-xl p-1 me-1 mt-1 text-white"
+                style={{ backgroundColor: color }}
+              >
+                {color}
+              </span>
+            ))}
+          </div>
           <div className="flex space-x-3">
             <Button
-              className="items-center rounded-xl bg-amber-800 font-semibold focus:outline-none hover:bg-amber-800/70 focus-visible:border-2
+              className="items-center rounded-xl bg-amber-800 font-semibold focus:outline-none focus-visible:border-2
             focus-visible:border-amber-950"
               onClick={submitHandler}
             >
               submit
             </Button>
             <Button
-              className="items-center rounded-xl bg-stone-400 font-semibold focus:outline-none hover:bg-amber-800/70 focus-visible:border-2
+              className="items-center rounded-xl bg-stone-400 font-semibold focus:outline-none focus-visible:border-2
             focus-visible:border-amber-950"
               onClick={oncancel}
             >

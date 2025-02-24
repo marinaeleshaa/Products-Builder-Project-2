@@ -12,7 +12,7 @@ export default {
         sm: '4rem',
         lg: '6rem',
         xl: '5rem',
-        '2xl': '7rem',
+        '2xl': '12rem',
       },
     },
     extend: {},

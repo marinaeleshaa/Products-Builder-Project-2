@@ -36,7 +36,8 @@ export const productValidation = (product: productInputs) => {
     imageURL: "",
   };
 
-  const validURL = /^(https?:\/\/)?[\w.-]+\.\w{2,}$/.test(product.imageURL);
+  const validURL = /^(https?:\/\/)?[\w.-]+\.\w{2,}([\\/\w.-]*)*\/?(\?.*)?$/.test(product.imageURL);
+
 
   if (
     !product.title.trim() ||
