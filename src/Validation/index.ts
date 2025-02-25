@@ -1,5 +1,6 @@
 // TODO"  productObject === errorsObject (title,description,price,imageURL)
 
+
 /**
  * Validates the product input fields and returns an object containing error messages.
  *
@@ -24,19 +25,22 @@ interface productInputs {
   description: string;
   price: string;
   imageURL: string;
+  colors?:string[]
 }
 
 export const productValidation = (product: productInputs) => {
   // ? return an object of errors
 
-  const errors: productInputs = {
+  const errors:{title:string,description:string,price:string,imageURL:string,colors:string} = {
     title: "",
     description: "",
     price: "",
     imageURL: "",
+    colors:''
   };
 
-  const validURL = /^(https?:\/\/)?[\w.-]+\.\w{2,}([\\/\w.-]*)*\/?(\?.*)?$/.test(product.imageURL);
+  const validURL = /^(https?:\/\/|\.{0,2}\/|\/)?([\w\s.-]+\/)*[\w\s-]+\.(jpg|jpeg|png|gif|svg|webp)$/i.test(product.imageURL);
+
 
 
   if (
@@ -57,5 +61,7 @@ export const productValidation = (product: productInputs) => {
 
   if(!product.price.trim() ||isNaN(Number(product.price)))
     errors.price='Valid price is required!'
+  if (!product.colors || product.colors.length === 0)
+    errors.colors = 'Please select at least one color';  
   return errors;
 };

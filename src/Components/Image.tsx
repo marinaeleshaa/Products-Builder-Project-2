@@ -9,7 +9,7 @@ const Image = ({ className, alt, url }: IProps) => {
     ? url
     : "https://i.pinimg.com/736x/e4/37/c6/e437c610a7179cfcde7b550341d70b65.jpg"; // New placeholder
 
-  return <img src={validSrc} alt={alt || "Image"} className={className} />;
+  return <img draggable='false' src={validSrc} alt={alt || "Image"} className={className} />;
 };
 
 export default Image;
